@@ -18,9 +18,10 @@
     "react-hot-toast": "^2.5.1"
   },
   "devDependencies": {
-     "@clerk/nextjs": "^6.32.2",
-     "inngest": "^1.0.0",
-     "sharp": "^0.33.3",
+    "@clerk/nextjs": "^6.32.2",
+    "eslint": "^9.36.0",
+    "inngest": "^1.0.0",
+    "sharp": "^0.33.3",
     "tailwindcss": "^3.4.1"
   }
 }
