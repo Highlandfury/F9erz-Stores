@@ -1,4 +1,5 @@
 import { Inngest } from "inngest";
+import User from "@/models/User"; // or wherever your schema is
 import dbConnect from "./db";
 
 // Create a client to send and receive events
