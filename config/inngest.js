@@ -1,4 +1,4 @@
-import { Inngest } from "inngest";
+import { inngest } from "inngest";
 import dbConnect from "./db";
 import User from "@/models/User";
 
