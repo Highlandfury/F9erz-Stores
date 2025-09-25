@@ -3,7 +3,9 @@ import dbConnect from "./db";
 import User from "@/models/User";
 
 // Create a client to send and receive events
-export const inngest = new Inngest({ id: "f9erz" });
+// Inngest requires a name in newer SDK versions. Provide a human-friendly
+// name plus an id for identification in logs/console.
+export const inngest = new Inngest({ name: "QuickCart", id: "f9erz" });
 
 // Ingest function to save user data to database
 export const syncUsercreation = inngest.createFunction(
