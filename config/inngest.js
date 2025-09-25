@@ -3,7 +3,10 @@ import { name } from "inngest/next";
 import dbConnect from "./db";
 
 // Create a client to send and receive events
-export const inngest = new Inngest({ id: "f9erz-next" });
+export const inngest = new Inngest({ id: "f9erz" ,
+  name: process.env.INNGEST_NAME || "F9erz",
+
+});
 
 // Inngest fucntion to save user data to a database
 export const syncUsercreation = inngest.createFunction(
