@@ -1,61 +1,65 @@
 import { Inngest } from "inngest";
-import User from "@/models/User"; // or wherever your schema is
 import dbConnect from "./db";
+import User from "@/models/User"; // <-- make sure path is correct
 
-// Create a client to send and receive events
-export const inngest = new Inngest({ id: "F9erz" ,
+// Inngest client
+export const inngest = new Inngest({
+  id: "f9erz-app",
   name: process.env.INNGEST_NAME || "F9erz",
-
 });
 
-// Inngest fucntion to save user data to a database
+// Clerk → User created
 export const syncUsercreation = inngest.createFunction(
-  {
-    id:'sync-user-from-clerk'
-  },
+  { id: "sync-user-from-clerk" },
+  { event: "clerk/user.created" },
+  async ({ event }) => {
+    console.log("User created event:", event); // debug
 
-  {event:'clerk/user.created'},
-  async ({event}) => {
-    const {id, first_name, last_name, email_addresses, image_url} = event.data
+    const { id, first_name, last_name, email_addresses, image_url } = event.data || {};
+
+    if (!id) throw new Error("No user data in event");
+
     const userData = {
       _id: id,
-      email: email_addresses[0].email_address,
-      name: first_name + '' + last_name,
+      email: email_addresses?.[0]?.email_address || "",
+      name: `${first_name || ""} ${last_name || ""}`.trim(),
       imageUrl: image_url,
-    }
-    await dbConnect()
-    await User.create(userData)
-  }
-)
+    };
 
-// Inngest function to update user data in a database
+    await dbConnect();
+    await User.create(userData);
+  }
+);
+
+// Clerk → User updated
 export const syncUserUpdation = inngest.createFunction(
-  {
-    id:'update-from-clerk'
-  },
-  {event:'clerk/user.updated'},
-  async ({event}) => {     const {id, first_name, last_name, email_addresses, image_url} = event.data
-    const userData = {
-      _id: id,
-      email: email_addresses[0].email_address,
-      name: first_name + '' + last_name,
-      imageUrl: image_url,
-    }
-    await dbConnect()
-    await User.findByIdAndUpdate(id, userData)
-  }
-)
+  { id: "update-from-clerk" },
+  { event: "clerk/user.updated" },
+  async ({ event }) => {
+    console.log("User updated event:", event);
 
-// Inngest function to delete user data from a database
-export const syncUserDeletion = inngest.createFunction(
-  { 
-    id:'delete-user-with-clerk'
-  },
-  {event:'clerk/user.deleted'},
-  async ({event}) => {
-    const {id} = event.data
-    
-    await dbConnect()
-    await User.findByIdAndDelete(id)
+    const { id, first_name, last_name, email_addresses, image_url } = event.data || {};
+
+    await dbConnect();
+    await User.findByIdAndUpdate(id, {
+      email: email_addresses?.[0]?.email_address || "",
+      name: `${first_name || ""} ${last_name || ""}`.trim(),
+      imageUrl: image_url,
+    });
   }
-)
+);
+
+// Clerk → User deleted
+export const syncUserDeletion = inngest.createFunction(
+  { id: "delete-user-with-clerk" },
+  { event: "clerk/user.deleted" },
+  async ({ event }) => {
+    console.log("User deleted event:", event);
+
+    const { id } = event.data || {};
+    if (!id) throw new Error("No user ID in event");
+
+    await dbConnect();
+    await User.findByIdAndDelete(id);
+  }
+);
