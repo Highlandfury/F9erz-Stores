@@ -12,7 +12,8 @@ export const inngest = new Inngest({
 // inngest function to save usr data to database
 export const syncUsercreation = inngest.createFunction(
   {
-    id:'sync-user-from-clerk',
+    id: 'sync-user-from-clerk',
+    name: 'Sync user from Clerk',
   },
   {
     event: "clerk/user.created",
@@ -34,6 +35,7 @@ export const syncUsercreation = inngest.createFunction(
 export const syncUserUpdation = inngest.createFunction(
   {
     id: 'update-user-from-clerk',
+    name: 'Update user from Clerk',
   },
   {
     event: "clerk/user.updated",
@@ -56,6 +58,7 @@ export const syncUserUpdation = inngest.createFunction(
 export const syncUserDeletion = inngest.createFunction(
   {
     id: 'delete-user-with-clerk',
+    name: 'Delete user with Clerk',
   },
   {
     event: "clerk/user.deleted",
