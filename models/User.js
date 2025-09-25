@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  _Id: { type: String, required: true, unique: true },
+  _id: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-    name: { type: String, required: true },
-    imageURL: { type: String, required: true },
-    cartItems: { type: Object, default: {} },
+  name: { type: String, required: true },
+  imageUrl: { type: String, required: true },
+  cartItems: { type: Object, default: {} },
 /*    isSeller: { type: Boolean, default: false },
     address: { type: String, default: "" },
     phone: { type: String, default: "" }, */
