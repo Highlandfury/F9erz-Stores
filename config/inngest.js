@@ -16,7 +16,7 @@ export const syncUsercreation = inngest.createFunction(
   {
     event: "clerk/user.created",
   },
-  async ({ event}) => {
+  async ({ event }) => {
     const { id, first_name, last_name, email_address, image_url } = event.data;
     const userData = {
       _id: id,
@@ -24,8 +24,14 @@ export const syncUsercreation = inngest.createFunction(
       name: first_name + " " + last_name,
       imageUrl: image_url,
     };
-    await dbConnect();
-    await User.create(userData);
+    try {
+      await dbConnect();
+      await User.create(userData);
+      return { success: true, id };
+    } catch (err) {
+      // Let Inngest mark the function as failed so it's visible in the UI/logs.
+      throw err;
+    }
   }
 );
 
@@ -45,8 +51,13 @@ export const syncUserUpdation = inngest.createFunction(
       email: email_address[0].email_address,
       imageUrl: image_url,
     };
-    await dbConnect();
-    await User.findByIdAndUpdate(id, userData);
+    try {
+      await dbConnect();
+      const res = await User.findByIdAndUpdate(id, userData, { new: true });
+      return { success: true, id, updated: !!res };
+    } catch (err) {
+      throw err;
+    }
   }
 );
 
@@ -60,9 +71,14 @@ export const syncUserDeletion = inngest.createFunction(
     event: "clerk/user.deleted",
   },
   async ({ event }) => {
-    const { id } = event.data
-    await dbConnect();
-    await User.findByIdAndDelete(id);
+    const { id } = event.data;
+    try {
+      await dbConnect();
+      const res = await User.findByIdAndDelete(id);
+      return { success: true, deletedId: id, deleted: !!res };
+    } catch (err) {
+      throw err;
+    }
   }
 );
 // You can add more functions here to handle other events from Clerk
