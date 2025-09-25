@@ -5,7 +5,7 @@ import User from "@/models/User";
 // Create a client to send and receive events
 // Inngest requires a name in newer SDK versions. Provide a human-friendly
 // name plus an id for identification in logs/console.
-export const inngest = new Inngest({ name: "QuickCart", id: "f9erz" });
+export const inngest = new Inngest({ name: "f9erz", id: "f9erz" });
 
 // Ingest function to save user data to database
 export const syncUsercreation = inngest.createFunction(
@@ -15,7 +15,7 @@ export const syncUsercreation = inngest.createFunction(
   {
     event: "clerk/user.created",
   },
-  async ({ event, step }) => {
+  async ({ event}) => {
     const { id, first_name, last_name, email_address, image_url } = event.data;
     const userData = {
       _id: id,
