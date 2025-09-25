@@ -9,7 +9,10 @@ const functions = [syncUsercreation, syncUserUpdation, syncUserDeletion].filter(
 let handlers;
 if (typeof inngest !== "undefined" && functions.length > 0) {
   try {
-    handlers = serve({ client: inngest, functions });
+  // `serve` expects (inngest, functions, opts). Passing an object made the
+  // second argument undefined inside the SDK which caused a `.filter` on
+  // `undefined` — leading to the runtime error. Pass the args positionally.
+  handlers = serve(inngest, functions);
   } catch (err) {
     // If Inngest's serve throws during build-time, fall back to no-op handlers
     // so Next's page data collection can continue.
